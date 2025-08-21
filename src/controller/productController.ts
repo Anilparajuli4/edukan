@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
 import type { AuthRequest } from "../middleware/middleware.js";
 import Product from "../models/product.js";
+import User from "../models/userModel.js";
+import Category from "../models/category.js";
 
 class ProductController{
-    public static async addProduct(req:AuthRequest, res:Response){
+    public static async addProduct(req:AuthRequest, res:Response):Promise<void>{
         const {productName, productDescription, productPrice, productTotalStockQty, productImageUrl, categoryId}= req.body
         if(!productName || !productDescription || !productPrice || !productTotalStockQty || !productImageUrl){
             res.status(400).json({message: "all fields are required"})
@@ -26,6 +28,68 @@ class ProductController{
         })
 
         res.status(201).json({message: "product created successfully"})
+    }
+
+    public static async getAllProducts(req:Request, res:Response):Promise<void>{
+        const products = await Product.findAll({
+            include: [
+                {
+                    model: User,
+                    attributes: ['email']
+                },
+                {
+                    model: Category
+                }
+            ]
+        })
+        res.status(401).json({
+            message: 'products fetched successfully',
+            data: products
+        })
+    }
+
+    public static async getSingleProducts(req:Request, res:Response):Promise<void>{
+        const id = req.params.id
+        const data = await Product.findAll({
+            where:{
+                id:id
+            }
+        })
+        if(data.length === 0){
+            res.status(404).json({
+                message: 'no product with this id'
+            })
+        }else{
+            res.status(200).json({
+                message:'product fetched',
+                data:data
+            })
+        }
+    }
+
+    public static async deleteProduct(req:Request, res:Response):Promise<void>{
+        const id = req.params.id
+       const data = await Product.findAll({
+        where:{
+            id:id
+        }
+       })
+
+       if(data.length === 0){
+          res.status(404).json({
+                message: 'no product with this id'
+            })
+       }else{
+          await Product.destroy({
+            where:{
+                id:id
+            }
+          })
+          res.status(200).json({
+            message: 'product deleted successfully'
+          })
+       }
+
     }
 }
 
