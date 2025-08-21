@@ -8,7 +8,9 @@ const router:Router = express.Router()
 
 
 router.route('/').post(AuthMiddleware.isAuthenticated, AuthMiddleware.restrictTo(Role.Admin), upload.single('image'), ProductController.addProduct)
-.get(ProductController.getAllProducts)
+.get(ProductController.getAllProducts).get()
+
+router.route('/:id').get(AuthMiddleware.isAuthenticated, ProductController.getSingleProducts).get(AuthMiddleware.isAuthenticated, AuthMiddleware.restrictTo(Role.Admin), ProductController.deleteProduct)
 
 
 

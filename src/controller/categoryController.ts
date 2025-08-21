@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import Category from "../models/category.js"
 
 class CategoryController{
@@ -35,6 +36,69 @@ class CategoryController{
         }
    
     }
+
+    public static async addCategory(req:Request, res:Response):Promise<void>{
+        const {categoryName}= req.body()
+        if(!categoryName){
+            res.status(400).json({
+            message: 'please provide category name'
+        })
+        } 
+        await Category.create({
+            categoryName
+        })
+
+        res.status(200).json({
+            message: "category added successfully"
+        })
+    }
+
+    public static async getCategory (req:Request, res:Response): Promise<void>{
+        const data = Category.findAll()
+        res.status(200).json({
+            message: 'category fetched',
+            data
+        })
+    }
+
+    public static async deleteCategory(req:Request, res:Response): Promise<void>{
+        const {id}= req.params
+        const data = await Category.findAll({
+            where:{
+                id
+            }
+        })
+
+          if(data.length === 0){
+            res.status(200).json({
+                message: 'no category with this id '
+            })
+          }else{
+            await Category.destroy({
+                where:{
+                    id
+                }
+            })
+            res.status(200).json({
+                message: 'sucessfully deleted category'
+            })
+          }
+    }
+
+    public static async updateCategory(req:Request, res:Response):Promise<void>{
+        const id = req.params.id
+        const {categoryName} = req.body
+        await Category.update({categoryName}, {
+            where:{
+                id
+            }
+        })
+
+        res.status(200).json({
+            message: 'category updated successfully'
+        })
+    }
+  
 }
 
 
