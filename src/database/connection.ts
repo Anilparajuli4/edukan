@@ -4,6 +4,7 @@ import path, { dirname } from "path";
 import User from "../models/userModel.js";
 import Product from "../models/product.js";
 import Category from "../models/category.js";
+import Cart from "../models/cart.js";
 
 // Recreate __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -19,7 +20,7 @@ const sequelize = new Sequelize({
     port : Number(process.env.DB_PORT),
     password: process.env.DB_PASSWORD || '',
     host: process.env.DB_HOST || '',
-      models: [User, Product, Category],
+      models: [User, Product, Category, Cart],
 
 })
 
@@ -46,6 +47,14 @@ Product.belongsTo(User, {foreignKey: 'userId'})
 
 Product.belongsTo(Category, {foreignKey: "categoryId"})
 Category.hasMany(Product, {foreignKey: "categoryId"})
+
+
+// Cart.hasMany(Product, {foreignKey:"productId"})
+// Product.belongsTo(Cart, {foreignKey: "productId"})
+
+Product.hasMany(Cart, {foreignKey: "productId"})
+Cart.belongsTo(Product, {foreignKey: "productId"})
+
 
 
 export default sequelize
