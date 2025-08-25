@@ -3,6 +3,7 @@ import userRoute from './routes/userRoutes.js'
 import productRoute from './routes/productRoute.js'
 import categoryRoute from './routes/categoryRoute.js'
 import cartRoute from './routes/cartRoute.js'
+import orderRoute from './routes/orderRoute.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -24,6 +25,7 @@ app.use("/auth", userRoute)
 app.use("/adimin/product", productRoute)
 app.use("/admin/category", categoryRoute)
 app.use("/customer", cartRoute)
+app.use("/customer", orderRoute)
 
 adminSeeder()
 // categoryController.seedCategories()

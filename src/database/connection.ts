@@ -5,6 +5,9 @@ import User from "../models/userModel.js";
 import Product from "../models/product.js";
 import Category from "../models/category.js";
 import Cart from "../models/cart.js";
+import Order from "../models/order.js";
+import OrderDetails from "../models/orderDetails.js";
+import Payment from "../models/payment.js";
 
 // Recreate __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -20,7 +23,7 @@ const sequelize = new Sequelize({
     port : Number(process.env.DB_PORT),
     password: process.env.DB_PASSWORD || '',
     host: process.env.DB_HOST || '',
-      models: [User, Product, Category, Cart],
+      models: [User, Product, Category, Cart, Order, OrderDetails, Payment],
 
 })
 
@@ -54,6 +57,19 @@ Category.hasMany(Product, {foreignKey: "categoryId"})
 
 Product.hasMany(Cart, {foreignKey: "productId"})
 Cart.belongsTo(Product, {foreignKey: "productId"})
+
+
+Order.hasMany(OrderDetails, {foreignKey: 'orderId'})
+OrderDetails.belongsTo(Order, {foreignKey: 'orderId'})
+
+Product.hasMany(OrderDetails, {foreignKey: 'productId'})
+OrderDetails.belongsTo(Product, {foreignKey: 'productId'})
+
+Payment.hasOne(Order, {foreignKey: 'paymentId'})
+Order.belongsTo(Payment, {foreignKey: 'paymentId'})
+
+User.hasMany(Order, {foreignKey: 'userId'})
+Order.belongsTo(User, {foreignKey: 'userId'})
 
 
 
